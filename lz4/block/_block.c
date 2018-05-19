@@ -395,19 +395,20 @@ PyDoc_STRVAR(compress__doc,
 
 PyDoc_STRVAR(decompress__doc,
              "decompress(source, uncompressed_size=-1, return_bytearray=False)\n\n"                                 \
-             "Decompress source, returning the uncompressed data as a string.\n" \
-             "Raises an exception if any error occurs.\n"             \
+             "Decompress source, returning the uncompressed data as ``bytes`` or\n" \
+             "``bytesarray``. Raises an exception if any error occurs.\n" \
              "\n"                                                       \
              "Args:\n"                                                  \
              "    source (str, bytes or buffer-compatible object): Data to decompress.\n" \
              "\n"                                                       \
              "Keyword Args:\n"                                          \
-             "    uncompressed_size (int): If not specified or negative, the uncompressed\n" \
-             "        data size is read from the start of the source block. If specified,\n" \
-             "        it is assumed that the full source data is compressed data.\n" \
+             "    uncompressed_size (int): If not specified, the uncompressed data\n" \
+             "        size is read from the start of the `source` block. If specified\n" \
+             "        and positive it is assumed that the full source data is compressed\n" \
+             "        data.\n"                                          \
              "    return_bytearray (bool): If ``False`` (the default) then the function\n" \
-             "        will return a bytes object. If ``True``, then the function will\n" \
-             "        return a bytearray object.\n\n" \
+             "        will return a ``bytes`` object. If ``True``, then the function will\n" \
+             "        return a ``bytearray`` object.\n\n" \
              "Returns:\n"                                               \
              "    bytes or bytearray: Decompressed data.\n");
 

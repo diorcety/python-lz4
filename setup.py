@@ -156,9 +156,7 @@ pytest_runner = ['pytest-runner'] if needs_pytest else []
 # Finally call setup with the extension modules as defined above.
 setup(
     name='lz4',
-    use_scm_version={
-        'write_to': "lz4/version.py",
-    },
+    version='2.1.10+x',
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     setup_requires=[
         'setuptools_scm',

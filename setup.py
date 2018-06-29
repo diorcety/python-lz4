@@ -147,9 +147,7 @@ tests_require = [
 # Finally call setup with the extension modules as defined above.
 setup(
     name='lz4',
-    use_scm_version={
-        'write_to': "lz4/version.py",
-    },
+    version='2.1.0+x',
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     setup_requires=[
         'setuptools_scm',

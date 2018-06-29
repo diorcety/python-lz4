@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages, Extension
 import sys
+import os
 from distutils import ccompiler
 
 # Note: if updating LZ4_REQUIRED_VERSION you need to update docs/install.rst as
@@ -12,6 +13,7 @@ PY3C_REQUIRED_VERSION = '>= 1.0'
 # of suitable versions, and use if so. If not, we'll use the bundled libraries.
 liblz4_found = False
 py3c_found = False
+liblz4_pkgconfig = False
 try:
     import pkgconfig
 except ImportError:
@@ -32,8 +34,16 @@ else:
             pass
         return installed
     liblz4_found = pkgconfig_installed('liblz4', LZ4_REQUIRED_VERSION, default=False)
+    if liblz4_found:
+        liblz4_pkgconfig = True
     py3c_found = pkgconfig_installed('py3c', PY3C_REQUIRED_VERSION, default=False)
 
+if not liblz4_found:
+    lz4_dir = os.environ.get('LZ4_DIR', None)
+    if lz4_dir:
+        liblz4_found = True
+        liblz4_include_dir = os.path.join(lz4_dir, "include")
+        liblz4_library_dir = os.path.join(lz4_dir, "lib")
 
 # Set up the extension modules. If a system wide lz4 library is found, and is
 # recent enough, we'll use that. Otherwise we'll build with the bundled one. If
@@ -43,7 +53,14 @@ else:
 # with what upstream lz4 recommends.
 
 include_dirs = []
+library_dirs = []
 libraries = []
+
+if liblz4_include_dir is not None:
+    include_dirs.append(liblz4_include_dir)
+
+if liblz4_library_dir is not None:
+    library_dirs.append(liblz4_library_dir)
 
 lz4version_sources = [
     'lz4/_version.c'
@@ -81,7 +98,7 @@ else:
         ]
     )
 
-if py3c_found is False:
+if not py3c_found:
     include_dirs.append('py3c')
 
 compiler = ccompiler.get_default_compiler()
@@ -92,7 +109,7 @@ extra_compile_args = []
 if compiler == 'msvc':
     extra_compile_args = ['/Ot', '/Wall']
 elif compiler in ('unix', 'mingw32'):
-    if liblz4_found:
+    if liblz4_found and liblz4_pkgconfig:
         extra_link_args.append(pkgconfig.libs('liblz4'))
         if pkgconfig.cflags('liblz4'):
             extra_compile_args.append(pkgconfig.cflags('liblz4'))
@@ -111,21 +128,27 @@ lz4version = Extension('lz4._version',
                        extra_compile_args=extra_compile_args,
                        extra_link_args=extra_link_args,
                        libraries=libraries,
-                       include_dirs=include_dirs)
+                       include_dirs=include_dirs,
+                       library_dirs=library_dirs,
+)
 
 lz4block = Extension('lz4.block._block',
                      lz4block_sources,
                      extra_compile_args=extra_compile_args,
                      extra_link_args=extra_link_args,
                      libraries=libraries,
-                     include_dirs=include_dirs)
+                     include_dirs=include_dirs,
+                     library_dirs=library_dirs,
+)
 
 lz4frame = Extension('lz4.frame._frame',
                      lz4frame_sources,
                      extra_compile_args=extra_compile_args,
                      extra_link_args=extra_link_args,
                      libraries=libraries,
-                     include_dirs=include_dirs)
+                     include_dirs=include_dirs,
+                     library_dirs=library_dirs,
+)
 
 install_requires = []
 

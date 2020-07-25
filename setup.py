@@ -108,7 +108,7 @@ compiler = ccompiler.get_default_compiler()
 extra_link_args = []
 extra_compile_args = []
 
-if compiler == 'msvc':
+if compiler == 'msvc' or compiler == 'clang-cl':
     extra_compile_args = ['/Ot', '/Wall', '/wd4711', '/wd4820']
 elif compiler in ('unix', 'mingw32'):
     if liblz4_found and liblz4_pkgconfig:
